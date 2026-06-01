@@ -16,7 +16,7 @@ class ApiRepository(private val client: HttpClient) : RepositoryInterface {
 
         return try {
             //intentar peticion
-            val response: List<OptionDTO> = client.get("posts").body()
+            val response: List<OptionDTO> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
 
             //success devolvemos lista de posts transformados
             Result.success(response.map { it.toModel() })
