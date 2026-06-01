@@ -1,6 +1,7 @@
 package com.pdmcourse2026.basictemplate.screens.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.pdmcourse2026.basictemplate.data.api.KtorClient
 import com.pdmcourse2026.basictemplate.data.model.Option
 import com.pdmcourse2026.basictemplate.data.repository.ApiRepository
@@ -8,6 +9,7 @@ import com.pdmcourse2026.basictemplate.data.repository.RepositoryInterface
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class HomeScreenUIState(
     val isLoading: Boolean = false,
@@ -22,6 +24,19 @@ class HomeScreenViewModel(): ViewModel() {
     private val _uiState = MutableStateFlow(HomeScreenUIState())
     val uiState: StateFlow<HomeScreenUIState> = _uiState.asStateFlow()
 
+    init {
+        fetchOptions()
+    }
 
+    fun fetchOptions() {
+
+        viewModelScope.launch {
+            _uiState.value = HomeScreenUIState(isLoading = true)
+            repository.getOptions(
+
+            )
+
+        }
+    }
 
 }
