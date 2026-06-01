@@ -13,11 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdmcourse2026.basictemplate.data.model.Option
 
-data class HomeScreenUIState(
-  val isLoading: Boolean = false,
-  val options: List<Option> = emptyList(),
-  val error: String? = null
-)
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
