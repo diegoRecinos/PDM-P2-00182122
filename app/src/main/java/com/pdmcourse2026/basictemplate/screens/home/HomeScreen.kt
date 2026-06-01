@@ -10,10 +10,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pdmcourse2026.basictemplate.data.model.Option
+
+data class HomeScreenUIState(
+  val isLoading: Boolean = false,
+  val options: List<Option> = emptyList(),
+  val error: String? = null
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+  modifier: Modifier = Modifier,
+  viewModel: HomeScreenViewModel = viewModel()
+) {
   Scaffold(
     topBar = {
       TopAppBar(
