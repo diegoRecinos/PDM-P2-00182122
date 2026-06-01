@@ -1,6 +1,12 @@
 package com.pdmcourse2026.basictemplate.data.repository
 
+import com.pdmcourse2026.basictemplate.data.model.Option
+
 interface RepositoryInterface {
+
+    suspend fun getOptions(): List<Option>
+
+    suspend fun createOption(option: Option): Option
 
 
 }
