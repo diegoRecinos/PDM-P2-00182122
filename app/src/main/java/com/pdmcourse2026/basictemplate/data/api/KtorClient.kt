@@ -16,6 +16,7 @@ import kotlinx.serialization.json.Json
 
 object KtorClient {
 
+  private const val BASE_URL = "https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/"
 
   private const val API_KEY = BuildConfig.API_TOKEN
 
