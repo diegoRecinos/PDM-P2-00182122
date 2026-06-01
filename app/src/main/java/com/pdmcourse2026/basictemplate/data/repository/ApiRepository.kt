@@ -12,7 +12,7 @@ import kotlin.collections.map
 
 class ApiRepository(private val client: HttpClient) : RepositoryInterface {
 
-    override suspend fun getPosts(): Result<List<Option>> {
+    override suspend fun getOptions(): Result<List<Option>> {
 
         return try {
             //intentar peticion
