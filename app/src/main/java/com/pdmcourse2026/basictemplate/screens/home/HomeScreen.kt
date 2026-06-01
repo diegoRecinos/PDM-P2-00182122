@@ -22,6 +22,7 @@ data class HomeScreenUIState(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+  onNavigateToResultScreen: () -> Unit,
   modifier: Modifier = Modifier,
   viewModel: HomeScreenViewModel = viewModel()
 ) {

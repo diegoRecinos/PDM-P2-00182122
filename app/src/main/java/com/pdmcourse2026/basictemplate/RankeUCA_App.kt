@@ -16,10 +16,12 @@ fun RankeUCA_App() {
     onBack = { backStack.removeLastOrNull() },
     entryProvider = entryProvider {
       entry<Routes.Home> {
-        HomeScreen()
+        HomeScreen(
+          onNavigateToResultScreen = { backStack.add(Routes.ResultScreen) }
+        )
       }
       entry<Routes.ResultScreen> {
-        ResultScreen()
+        ResultScreen(onBack = { backStack.removeLastOrNull() })
       }
 
     },
