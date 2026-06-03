@@ -31,7 +31,12 @@ class ResultScreenViewModel() : ViewModel()
                 _uiState.update { it.copy(isLoading = true, error = null) }
                 repository.getOptions()
                     .onSuccess { options -> 
-                        _uiState.update { it.copy(options = options, isLoading = false) }  
+                        _uiState.update { 
+                            it.copy(
+                                options = options.sortedByDescending { it.votes }, 
+                                isLoading = false
+                            ) 
+                        }
                     }
                     .onFailure { error -> 
                         _uiState.update { it.copy(error = error.message, isLoading = false) } 
