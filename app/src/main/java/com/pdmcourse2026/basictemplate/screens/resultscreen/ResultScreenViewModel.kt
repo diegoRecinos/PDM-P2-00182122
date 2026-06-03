@@ -26,21 +26,19 @@ class ResultScreenViewModel() : ViewModel()
     }
 
     fun fetchOptions() {
-
         viewModelScope.launch{
-
             try {
-
-                _uiState.update { it.copy(isLoading = true) }
-
+                _uiState.update { it.copy(isLoading = true, error = null) }
                 repository.getOptions()
-                    .onSuccess { options -> _uiState.update { it.copy(options = options, isLoading = false) }  }
-                    .onFailure { error -> _uiState.update { it.copy(error = error.message, isLoading = false) } }
-
-
+                    .onSuccess { options -> 
+                        _uiState.update { it.copy(options = options, isLoading = false) }  
+                    }
+                    .onFailure { error -> 
+                        _uiState.update { it.copy(error = error.message, isLoading = false) } 
+                    }
             } catch (e: Exception) {
-                e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
-                _uiState.update { it.copy(error = e.message) }
+                e("ResultScreenViewModel", "Error fetching options: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
         }
     }
@@ -48,26 +46,23 @@ class ResultScreenViewModel() : ViewModel()
     fun resetAllVotes(){
         viewModelScope.launch {
             try {
-
-                _uiState.update { it.copy(isLoading = true) }
-
+                _uiState.update { it.copy(isLoading = true, error = null) }
                 repository.resetVotes()
                     .onSuccess {
                         _uiState.update { it.copy(
                                 hasVoted = false,
-                                selectedOptionId = null
+                                selectedOptionId = null,
+                                isLoading = false
                             )
                         }
                         fetchOptions()
                     }
-                    .onFailure {
-                        error -> _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    .onFailure { error -> 
+                        _uiState.update { it.copy(isLoading = false, error = error.message) }
                     }
-
-
             } catch (e: Exception) {
-                e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
-                _uiState.update { it.copy(error = e.message) }
+                e("ResultScreenViewModel", "Error resetting votes: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
 
         }

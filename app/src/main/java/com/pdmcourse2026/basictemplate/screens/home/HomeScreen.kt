@@ -56,6 +56,7 @@ fun HomeScreen(
       if (uiState.hasVoted) {
         Button(
           onClick = onNavigateToResultScreen,
+
           modifier = Modifier.padding(16.dp),
         ){
           Text("Ver resultados")

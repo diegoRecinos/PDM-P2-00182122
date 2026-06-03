@@ -64,7 +64,7 @@ class HomeScreenViewModel(): ViewModel() {
                                 isVoting = false
                             )
                         }
-                        fetchOptions() // Refresh votes after voting
+                        fetchOptions()
                     }
                     .onFailure { error ->
                         _uiState.update {
@@ -79,10 +79,6 @@ class HomeScreenViewModel(): ViewModel() {
         }
     }
 
-    /**
-     * Resetea el estado local para permitir al usuario votar de nuevo 
-     * sin reiniciar los contadores globales del servidor.
-     */
     fun resetLocalVote() {
         _uiState.update {
             it.copy(
@@ -90,12 +86,12 @@ class HomeScreenViewModel(): ViewModel() {
                 selectedOptionId = null,
                 error = null
             )
+
         }
+        fetchOptions()
     }
 
-    /**
-     * Reinicia todos los votos en el servidor (Uso administrativo).
-     */
+
     fun resetAllVotesAdmin() {
         viewModelScope.launch {
             try {
