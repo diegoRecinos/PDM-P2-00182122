@@ -16,7 +16,10 @@ import kotlinx.coroutines.launch
 data class HomeScreenUIState(
     val isLoading: Boolean = false,
     val options: List<Option> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val hasVoted: Boolean = false,
+    val isVoting: Boolean = false,
+    val selectedOptionId: Int? = null
 )
 
 class HomeScreenViewModel(): ViewModel() {
@@ -31,22 +34,85 @@ class HomeScreenViewModel(): ViewModel() {
     }
 
     fun fetchOptions() {
-
-        viewModelScope.launch{
-
-        try {
-
-                _uiState.value = HomeScreenUIState(isLoading = true)
-                val result = repository.getOptions()
-
-                _uiState.update { it.copy(options = result) }
-
-                _uiState.update { it.copy(isLoading = false) }
-        } catch (e: Exception) {
-            e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
-            _uiState.update { it.copy(error = e.message) }
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true, error = null) }
+                repository.getOptions()
+                    .onSuccess { options ->
+                        _uiState.update { 
+                            it.copy(
+                                options = options.sortedByDescending { it.votes },
+                                isLoading = false
+                            ) 
+                        }
+                    }
+                    .onFailure { error ->
+                        _uiState.update { it.copy(error = error.message, isLoading = false) }
+                    }
+            } catch (e: Exception) {
+                e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
         }
     }
+
+    fun vote(optionId: Int) {
+        if (!_uiState.value.isVoting && !_uiState.value.hasVoted) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isVoting = true, selectedOptionId = optionId, error = null) }
+                repository.voteOption(optionId)
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                selectedOptionId = optionId,
+                                hasVoted = true,
+                                isVoting = false
+                            )
+                        }
+                        fetchOptions()
+                    }
+                    .onFailure { error ->
+                        _uiState.update {
+                            it.copy(
+                                isVoting = false,
+                                selectedOptionId = null,
+                                error = error.message
+                            )
+                        }
+                    }
+            }
+        }
     }
 
+    fun resetLocalVote() {
+        _uiState.update {
+            it.copy(
+                hasVoted = false,
+                selectedOptionId = null,
+                error = null
+            )
+
+        }
+        fetchOptions()
+    }
+
+
+    fun resetAllVotesAdmin() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true, error = null) }
+                repository.resetVotes()
+                    .onSuccess {
+                        resetLocalVote()
+                        fetchOptions()
+                    }
+                    .onFailure { error ->
+                        _uiState.update { it.copy(error = error.message, isLoading = false) }
+                    }
+            } catch (e: Exception) {
+                e("HomeScreenViewModel", "Error resetting votes: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
+        }
+    }
 }

@@ -1,0 +1,8 @@
+package com.pdmcourse2026.basictemplate.data.api.options
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class VoteOptionRequestDTO(
+    val optionId: Int
+)

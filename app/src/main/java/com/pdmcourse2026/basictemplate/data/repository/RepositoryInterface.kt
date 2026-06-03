@@ -4,9 +4,11 @@ import com.pdmcourse2026.basictemplate.data.model.Option
 
 interface RepositoryInterface {
 
-    suspend fun getOptions(): List<Option>
+    suspend fun getOptions(): Result<List<Option>>
 
-    suspend fun createOption(option: Option): Option
+    suspend fun voteOption(optionId: Int): Result<Unit>
+
+    suspend fun resetVotes(): Result<Unit>
 
 
 }

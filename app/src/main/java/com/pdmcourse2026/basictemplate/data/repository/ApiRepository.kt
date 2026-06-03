@@ -1,47 +1,73 @@
 package com.pdmcourse2026.basictemplate.data.repository
 
 import android.util.Log
+import android.util.Log.e
 import com.pdmcourse2026.basictemplate.data.api.options.OptionDTO
+import com.pdmcourse2026.basictemplate.data.api.options.VoteOptionRequestDTO
+import com.pdmcourse2026.basictemplate.data.api.options.VoteResponseDTO
 import com.pdmcourse2026.basictemplate.data.api.options.toModel
 import io.ktor.client.HttpClient
 import com.pdmcourse2026.basictemplate.data.model.Option
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import kotlin.collections.map
 
 
 class ApiRepository(private val client: HttpClient) : RepositoryInterface {
 
-    override suspend fun getOptions(): List<Option> {
+    override suspend fun getOptions(): Result<List<Option>> {
 
-//        return try {
-//            //intentar peticion
-//            val response: List<OptionDTO> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
-//
-//            //success devolvemos lista de posts transformados
-//            Result.success(response.map { it.toModel() })
-//
-//        } catch (e: Exception) {
-//            //devolver err
-//            Log.e("ApiRepository", "Error fetching posts: ${e.message}", e)
-//            Result.failure(e)
-//        }
-        val response: List<OptionDTO> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
-        return response.map { it.toModel() }
+        return try {
+            val response: List<OptionDTO> = client.get("options").body()
+            Result.success(response.map { it.toModel() })
+
+        }catch (e: Exception){
+            Log.e("ApiRepository", "Error fetching options: ${e.message}", e)
+            Result.failure(e)
+        }
 
     }
 
 
-//    override suspend fun getOptions(): List<Option> {
-//
-//        val response: List<Option> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
-//
-//        return response.map { it.toModel()
-//
-//    }
+    override suspend fun voteOption(optionId: Int): Result<Unit> {
 
-    override suspend fun createOption(option: Option): Option {
-        TODO()
+        return try {
+
+            val response: VoteResponseDTO = client.post("vote"){
+                setBody(VoteOptionRequestDTO(optionId))
+            }.body()
+
+            if(response.ok){
+                Result.success(Unit)
+            }else{
+                Result.failure(Exception(response.message))
+            }
+
+        }catch (e: Exception){
+            Log.e("ApiRepository", "Error voting option: ${e.message}", e)
+            Result.failure(e)
+        }
+
+    }
+
+    override suspend fun resetVotes(): Result<Unit> {
+        return try {
+
+            val response: VoteResponseDTO = client.post("reset")
+                .body()
+
+            if(response.ok){
+                Result.success(Unit)
+            }else{
+                Result.failure(Exception(response.message ?: "error"))
+            }
+
+        }catch (e: Exception){
+            Log.e("ApiRepository", "Error voting option: ${e.message}", e)
+            Result.failure(e)
+        }
     }
 
 
