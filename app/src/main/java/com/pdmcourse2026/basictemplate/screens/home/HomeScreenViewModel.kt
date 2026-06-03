@@ -43,7 +43,6 @@ class HomeScreenViewModel(): ViewModel() {
                 .onSuccess { options -> _uiState.update { it.copy(options = options, isLoading = false) }  }
                 .onFailure { error -> _uiState.update { it.copy(error = error.message, isLoading = false) } }
 
-        //_uiState.update { it.copy(options = result, isLoading = false) }
 
         } catch (e: Exception) {
             e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)

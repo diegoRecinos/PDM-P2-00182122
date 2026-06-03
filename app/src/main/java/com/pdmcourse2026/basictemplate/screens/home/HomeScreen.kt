@@ -2,6 +2,7 @@ package com.pdmcourse2026.basictemplate.screens.home
 
 import android.util.Log.e
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,8 +41,6 @@ fun HomeScreen(
 
   val uiState by viewModel.uiState.collectAsState()
 
-  //val refreshing by viewModel.refreshing.collectAsState()
-
   Scaffold(
     topBar = {
       TopAppBar(
@@ -54,7 +53,11 @@ fun HomeScreen(
     }
   ) { innerPadding ->
     Column(modifier = Modifier.padding(innerPadding)) {
-      Text(text = "Home Screen")
+      Text(
+        text = "Opciones para votar",
+        modifier = Modifier.padding(16.dp),
+        style = MaterialTheme.typography.titleMedium
+      )
 
       if(uiState.isLoading){
         CircularProgressIndicator()
@@ -69,10 +72,13 @@ fun HomeScreen(
           isRefreshing = uiState.isLoading,
           onRefresh = { viewModel.fetchOptions() }
         ) {
-              LazyColumn() {
+              LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp)
+              ) {
                   items(uiState.options){
                       option ->
                       OptionItem(option = option)
+                      Spacer(modifier = Modifier.height(12.dp))
                   }
               }
           }
