@@ -1,6 +1,5 @@
 package com.pdmcourse2026.basictemplate.screens.home
 
-import android.util.Log.e
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -97,7 +95,7 @@ fun HomeScreen(
 
                         isSelected = uiState.selectedOptionId == option.id,
 
-                        isVoted = uiState.isVoting && uiState.selectedOptionId == option.id,
+                        isLoading = uiState.isVoting && uiState.selectedOptionId == option.id,
                         enabled = !uiState.hasVoted && !uiState.isVoting,
                         onVote = { viewModel.vote(option.id) }
 
@@ -116,7 +114,7 @@ fun HomeScreen(
 fun OptionItem(
   option: Option,
   isSelected: Boolean,
-  isVoted: Boolean,
+  isLoading: Boolean,
   enabled: Boolean,
   onVote: () -> Unit
 ) {
@@ -145,12 +143,24 @@ fun OptionItem(
         headlineContent = {
           Text(option.name, style = MaterialTheme.typography.titleLarge)
         },
+        supportingContent = {
+          if (isSelected){
+            Text(
+              text = "tu voto"
+            )
+          }else if (enabled){
+            Text(
+              text = "toca para votar"
+            )
+          }
+        }
+
 //        supportingContent = {
 //          Text("Votos actuales: ${option.votes}")
 //        }
       )
 
-      if (isVoted){
+      if (isLoading){
         CircularProgressIndicator()
       }
 

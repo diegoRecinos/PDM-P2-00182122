@@ -62,12 +62,12 @@ class HomeScreenViewModel(): ViewModel() {
                 _uiState.update { it.copy(isVoting = true, selectedOptionId = optionId,error = null) }
 
                 repository.voteOption(optionId)
-                    .onSuccess { updatedOption ->
-
+                    .onSuccess {
                         _uiState.update { it.copy(
-                            selectedOptionId =  updatedOption.id,
+                            selectedOptionId =  optionId,
                             hasVoted = true,
-                            isVoting = false) }
+                            isVoting = false)
+                        }
                     }
                     .onFailure { error ->
                         _uiState.update { it.copy(
