@@ -14,31 +14,13 @@ class ApiRepository(private val client: HttpClient) : RepositoryInterface {
 
     override suspend fun getOptions(): List<Option> {
 
-//        return try {
-//            //intentar peticion
-//            val response: List<OptionDTO> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
-//
-//            //success devolvemos lista de posts transformados
-//            Result.success(response.map { it.toModel() })
-//
-//        } catch (e: Exception) {
-//            //devolver err
-//            Log.e("ApiRepository", "Error fetching posts: ${e.message}", e)
-//            Result.failure(e)
-//        }
-        val response: List<OptionDTO> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
+
+        val response: List<OptionDTO> = client.get("options").body()
         return response.map { it.toModel() }
 
     }
 
 
-//    override suspend fun getOptions(): List<Option> {
-//
-//        val response: List<Option> = client.get("https://qjcxdvfzyseuvezacxsd.supabase.co/functions/v1/rankeuca/options").body()
-//
-//        return response.map { it.toModel()
-//
-//    }
 
     override suspend fun createOption(option: Option): Option {
         TODO()

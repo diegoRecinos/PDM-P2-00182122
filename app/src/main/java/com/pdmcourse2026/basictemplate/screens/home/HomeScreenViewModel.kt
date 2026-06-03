@@ -36,12 +36,12 @@ class HomeScreenViewModel(): ViewModel() {
 
         try {
 
-                _uiState.value = HomeScreenUIState(isLoading = true)
-                val result = repository.getOptions()
+            _uiState.update { it.copy(isLoading = true) }
 
-                _uiState.update { it.copy(options = result) }
+            val result = repository.getOptions()
 
-                _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { it.copy(options = result, isLoading = false) }
+
         } catch (e: Exception) {
             e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
             _uiState.update { it.copy(error = e.message) }
