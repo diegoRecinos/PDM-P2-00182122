@@ -3,6 +3,7 @@ package com.pdmcourse2026.basictemplate.screens.home
 import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.util.CoilUtils.result
 import com.pdmcourse2026.basictemplate.data.api.KtorClient
 import com.pdmcourse2026.basictemplate.data.model.Option
 import com.pdmcourse2026.basictemplate.data.repository.ApiRepository
@@ -38,9 +39,11 @@ class HomeScreenViewModel(): ViewModel() {
 
             _uiState.update { it.copy(isLoading = true) }
 
-            val result = repository.getOptions()
+            repository.getOptions()
+                .onSuccess { options -> _uiState.update { it.copy(options = options, isLoading = false) }  }
+                .onFailure { error -> _uiState.update { it.copy(error = error.message, isLoading = false) } }
 
-            _uiState.update { it.copy(options = result, isLoading = false) }
+        //_uiState.update { it.copy(options = result, isLoading = false) }
 
         } catch (e: Exception) {
             e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
