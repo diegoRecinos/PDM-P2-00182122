@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +40,7 @@ fun HomeScreen(
 
   val uiState by viewModel.uiState.collectAsState()
 
+  //val refreshing by viewModel.refreshing.collectAsState()
 
   Scaffold(
     topBar = {
@@ -63,13 +65,18 @@ fun HomeScreen(
       }
 
         else {
-            LazyColumn() {
-                items(uiState.options){
-                    option ->
-                    OptionItem(option = option)
-                }
-            }
-        }
+        PullToRefreshBox (
+          isRefreshing = uiState.isLoading,
+          onRefresh = { viewModel.fetchOptions() }
+        ) {
+              LazyColumn() {
+                  items(uiState.options){
+                      option ->
+                      OptionItem(option = option)
+                  }
+              }
+          }
+      }
     }
 
   }
@@ -82,24 +89,24 @@ fun OptionItem(option: Option) {
     elevation = CardDefaults.cardElevation(4.dp)
   ) {
     Column {
-      // Cargamos la imagen de la URL que viene de la API
+
       AsyncImage(
         model = option.imageUrl,
         contentDescription = option.name,
         modifier = Modifier
           .fillMaxWidth()
           .height(180.dp),
-        contentScale = ContentScale.Crop // Para que la imagen llene el espacio
+        contentScale = ContentScale.Crop
       )
 
-      // Mostramos el nombre y los votos
+
       ListItem(
         headlineContent = {
           Text(option.name, style = MaterialTheme.typography.titleLarge)
         },
-        supportingContent = {
-          Text("Votos actuales: ${option.votes}")
-        }
+//        supportingContent = {
+//          Text("Votos actuales: ${option.votes}")
+//        }
       )
     }
   }
