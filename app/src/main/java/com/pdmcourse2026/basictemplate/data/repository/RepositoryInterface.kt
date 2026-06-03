@@ -8,5 +8,7 @@ interface RepositoryInterface {
 
     suspend fun voteOption(optionId: Int): Result<Unit>
 
+    suspend fun resetVotes(): Result<Unit>
+
 
 }

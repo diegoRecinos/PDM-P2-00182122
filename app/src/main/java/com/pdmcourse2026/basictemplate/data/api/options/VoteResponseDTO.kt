@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VoteResponseDTO(
     val ok: Boolean,
-    val message: String
+    val message: String? = null
 )

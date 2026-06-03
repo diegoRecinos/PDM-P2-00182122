@@ -3,7 +3,6 @@ package com.pdmcourse2026.basictemplate.screens.home
 import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil3.util.CoilUtils.result
 import com.pdmcourse2026.basictemplate.data.api.KtorClient
 import com.pdmcourse2026.basictemplate.data.model.Option
 import com.pdmcourse2026.basictemplate.data.repository.ApiRepository
@@ -35,53 +34,84 @@ class HomeScreenViewModel(): ViewModel() {
     }
 
     fun fetchOptions() {
-
-        viewModelScope.launch{
-
-        try {
-
-            _uiState.update { it.copy(isLoading = true) }
-
-            repository.getOptions()
-                .onSuccess { options -> _uiState.update { it.copy(options = options, isLoading = false) }  }
-                .onFailure { error -> _uiState.update { it.copy(error = error.message, isLoading = false) } }
-
-
-        } catch (e: Exception) {
-            e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
-            _uiState.update { it.copy(error = e.message) }
-        }
-    }
-    }
-
-    fun vote(optionId: Int){
-        if(!_uiState.value.isVoting && !_uiState.value.hasVoted){
-
-            viewModelScope.launch {
-
-                _uiState.update { it.copy(isVoting = true, selectedOptionId = optionId,error = null) }
-
-                repository.voteOption(optionId)
-                    .onSuccess {
-                        _uiState.update { it.copy(
-                            selectedOptionId =  optionId,
-                            hasVoted = true,
-                            isVoting = false)
-                        }
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true, error = null) }
+                repository.getOptions()
+                    .onSuccess { options ->
+                        _uiState.update { it.copy(options = options, isLoading = false) }
                     }
                     .onFailure { error ->
-                        _uiState.update { it.copy(
-                            isVoting = false,
-                            selectedOptionId = null,
-                            error = error.message)
-                        }
+                        _uiState.update { it.copy(error = error.message, isLoading = false) }
                     }
-
-
+            } catch (e: Exception) {
+                e("HomeScreenViewModel", "Error fetching options: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
-
-
         }
     }
 
+    fun vote(optionId: Int) {
+        if (!_uiState.value.isVoting && !_uiState.value.hasVoted) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isVoting = true, selectedOptionId = optionId, error = null) }
+                repository.voteOption(optionId)
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                selectedOptionId = optionId,
+                                hasVoted = true,
+                                isVoting = false
+                            )
+                        }
+                        fetchOptions() // Refresh votes after voting
+                    }
+                    .onFailure { error ->
+                        _uiState.update {
+                            it.copy(
+                                isVoting = false,
+                                selectedOptionId = null,
+                                error = error.message
+                            )
+                        }
+                    }
+            }
+        }
+    }
+
+    /**
+     * Resetea el estado local para permitir al usuario votar de nuevo 
+     * sin reiniciar los contadores globales del servidor.
+     */
+    fun resetLocalVote() {
+        _uiState.update {
+            it.copy(
+                hasVoted = false,
+                selectedOptionId = null,
+                error = null
+            )
+        }
+    }
+
+    /**
+     * Reinicia todos los votos en el servidor (Uso administrativo).
+     */
+    fun resetAllVotesAdmin() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true, error = null) }
+                repository.resetVotes()
+                    .onSuccess {
+                        resetLocalVote()
+                        fetchOptions()
+                    }
+                    .onFailure { error ->
+                        _uiState.update { it.copy(error = error.message, isLoading = false) }
+                    }
+            } catch (e: Exception) {
+                e("HomeScreenViewModel", "Error resetting votes: ${e.message}", e)
+                _uiState.update { it.copy(error = e.message, isLoading = false) }
+            }
+        }
+    }
 }

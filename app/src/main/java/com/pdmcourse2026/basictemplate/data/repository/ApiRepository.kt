@@ -52,5 +52,23 @@ class ApiRepository(private val client: HttpClient) : RepositoryInterface {
 
     }
 
+    override suspend fun resetVotes(): Result<Unit> {
+        return try {
+
+            val response: VoteResponseDTO = client.post("reset")
+                .body()
+
+            if(response.ok){
+                Result.success(Unit)
+            }else{
+                Result.failure(Exception(response.message ?: "error"))
+            }
+
+        }catch (e: Exception){
+            Log.e("ApiRepository", "Error voting option: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
 
 }
