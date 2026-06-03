@@ -1,6 +1,7 @@
 package com.pdmcourse2026.basictemplate.screens.home
 
 import android.util.Log.e
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 
@@ -50,7 +52,19 @@ fun HomeScreen(
         ),
         title = { Text("RankeUca - Vota") },
       )
+    },
+    bottomBar = {
+      if (uiState.hasVoted) {
+        Button(
+          onClick = onNavigateToResultScreen,
+          modifier = Modifier.padding(16.dp),
+        ){
+          Text("Ver resultados")
+        }
+      }
     }
+
+
   ) { innerPadding ->
     Column(modifier = Modifier.padding(innerPadding)) {
       Text(
@@ -77,7 +91,13 @@ fun HomeScreen(
               ) {
                   items(uiState.options){
                       option ->
-                      OptionItem(option = option)
+                      OptionItem(
+                        option = option,
+                        isSelected = uiState.selectedOptionId?.id == option.id,
+                        isVoted = uiState.hasVoted && uiState.selectedOptionId?.id == option.id,
+                        onVote = { viewModel.vote(option.id) }
+
+                      )
                       Spacer(modifier = Modifier.height(12.dp))
                   }
               }
@@ -89,10 +109,21 @@ fun HomeScreen(
 }
 
 @Composable
-fun OptionItem(option: Option) {
+fun OptionItem(
+  option: Option,
+  isSelected: Boolean,
+  isVoted: Boolean,
+  enabled: Boolean,
+  onVote: () -> Unit
+) {
   Card(
-    modifier = Modifier.fillMaxWidth(),
-    elevation = CardDefaults.cardElevation(4.dp)
+    modifier = Modifier
+      .fillMaxWidth()
+      .clickable(enabled = enabled) { onVote() },
+    elevation = CardDefaults.cardElevation(4.dp),
+    border = if (isSelected) CardDefaults.outlinedCardBorder() else null,
+
+
   ) {
     Column {
 
@@ -114,6 +145,11 @@ fun OptionItem(option: Option) {
 //          Text("Votos actuales: ${option.votes}")
 //        }
       )
+
+      if (isVoted){
+        CircularProgressIndicator()
+      }
+
     }
   }
 }

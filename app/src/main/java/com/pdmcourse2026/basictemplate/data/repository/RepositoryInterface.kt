@@ -6,7 +6,7 @@ interface RepositoryInterface {
 
     suspend fun getOptions(): Result<List<Option>>
 
-    suspend fun createOption(option: Option): Option
+    suspend fun voteOption(optionId: Int): Result<Option>
 
 
 }
