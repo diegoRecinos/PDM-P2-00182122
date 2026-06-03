@@ -55,23 +55,24 @@ class HomeScreenViewModel(): ViewModel() {
     }
 
     fun vote(optionId: Int){
-        if(!_uiState.value.isVoting || !_uiState.value.hasVoted){
+        if(!_uiState.value.isVoting && !_uiState.value.hasVoted){
 
             viewModelScope.launch {
 
-                _uiState.update { it.copy(isVoting = true, error = null) }
+                _uiState.update { it.copy(isVoting = true, selectedOptionId = optionId,error = null) }
 
                 repository.voteOption(optionId)
                     .onSuccess { updatedOption ->
 
                         _uiState.update { it.copy(
-                            selectedOptionId =  optionId,
+                            selectedOptionId =  updatedOption.id,
                             hasVoted = true,
                             isVoting = false) }
                     }
                     .onFailure { error ->
                         _uiState.update { it.copy(
-                            hasVoted = false,
+                            isVoting = false,
+                            selectedOptionId = null,
                             error = error.message)
                         }
                     }

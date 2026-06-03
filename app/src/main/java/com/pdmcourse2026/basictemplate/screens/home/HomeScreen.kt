@@ -1,6 +1,7 @@
 package com.pdmcourse2026.basictemplate.screens.home
 
 import android.util.Log.e
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -93,8 +94,11 @@ fun HomeScreen(
                       option ->
                       OptionItem(
                         option = option,
-                        isSelected = uiState.selectedOptionId?.id == option.id,
-                        isVoted = uiState.hasVoted && uiState.selectedOptionId?.id == option.id,
+
+                        isSelected = uiState.selectedOptionId == option.id,
+
+                        isVoted = uiState.isVoting && uiState.selectedOptionId == option.id,
+                        enabled = !uiState.hasVoted && !uiState.isVoting,
                         onVote = { viewModel.vote(option.id) }
 
                       )
@@ -121,7 +125,7 @@ fun OptionItem(
       .fillMaxWidth()
       .clickable(enabled = enabled) { onVote() },
     elevation = CardDefaults.cardElevation(4.dp),
-    border = if (isSelected) CardDefaults.outlinedCardBorder() else null,
+    border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary)  else null,
 
 
   ) {
