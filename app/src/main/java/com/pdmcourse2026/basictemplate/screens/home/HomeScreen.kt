@@ -161,9 +161,7 @@ fun OptionItem(
 //        }
       )
 
-      if (isLoading){
-        CircularProgressIndicator()
-      }
+
 
     }
   }

@@ -12,6 +12,8 @@ navigation3 = "1.1.0"
 kotlinxSerializationCore = "1.11.0"
 coil = "3.4.0"
 ktor = "3.5.0"
+googleFirebaseAppdistribution = "5.2.1"
+googleGmsGoogleServices = "4.4.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,5 +47,7 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "googleFirebaseAppdistribution" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
 
